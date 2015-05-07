@@ -1,9 +1,14 @@
 package com.muath.mathtest;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import android.app.Fragment;
+import android.content.res.AssetManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,9 +42,9 @@ public class TestFragment extends Fragment {
 		
 		private int num1 = 0;
 		private int num2 = 0;
-		private int multiplicationAnswer = 0;
-		private int additionAnswer = 0;
-		private int subtractionAnswer = 0;
+		private int multiplication = 0;
+		private int addition = 0;
+		private int subtraction = 0;
 		
 		
 	    @Override
@@ -49,10 +54,7 @@ public class TestFragment extends Fragment {
 	       super.onCreateView(inflater, container, savedInstanceState);    
 	       View view = 
 	          inflater.inflate(R.layout.fragment_test, container, false);
-	       
-	       buttonLinearLayout = (LinearLayout) 
-	    		   view.findViewById(R.id.buttonLinearLayout);
-	       
+	             
 	       additionTextView = 
 	    		   (TextView) view.findViewById(R.id.additionDisplayTextView);
 	       subtractionTextView =
@@ -78,8 +80,11 @@ public class TestFragment extends Fragment {
 	    		   (ImageView) view.findViewById(R.id.twoStarImageView);
 	       threeStarImageView =
 	    		   (ImageView) view.findViewById(R.id.threeStarImageView);
+	       resultTextView = 
+	    		   (TextView) view.findViewById(R.id.resultTextView);
 	       resetTest ();
-	       //resetButton.setOnClickListener(resetButtonListener);
+	       submitButton.setOnClickListener(submitButtonListener);
+	       resetButton.setOnClickListener(resetButtonListener);
 	       return view;
 	    }
 	    
@@ -94,13 +99,15 @@ public class TestFragment extends Fragment {
 	    	additionTextView.setText(additionString);
 	    	subtractionTextView.setText(subtractionString);
 	    	multiplicationTextView.setText(multiplicationString);
-	    	addtionEditText.setText("");
-	    	subtractionEditText.setText("");
-	    	multiplicationEditText.setText("");
+	    	addtionEditText.setText("0");
+	    	subtractionEditText.setText("0");
+	    	multiplicationEditText.setText("0");
 	    	resultTextView.setText("");
-	    	//Image reset;
+	    	oneStarImageView.setImageDrawable(null);
+	    	twoStarImageView.setImageDrawable(null);
+	    	threeStarImageView.setImageDrawable(null);
 	    }
-	    /*
+	    
 	    private OnClickListener resetButtonListener = 
 	    		new OnClickListener()
 	    {
@@ -110,13 +117,56 @@ public class TestFragment extends Fragment {
 	    		resetTest();
 	    	}
 	    };
-	    */
+	    
+	    private OnClickListener submitButtonListener = 
+	    		new OnClickListener()
+	    {
+	    	@Override
+	    	public void onClick(View v) 
+	    	{
+	    		submitAnswer();
+	    	}
+	    };
+	    
 	    
 	    private void submitAnswer() {
-	    	additionAnswer = num1 + num2;
-	    	subtractionAnswer = num1 - num2;
-	    	multiplicationAnswer = num1 * num2;
-	    	//if()
+	    	int correctAnswers = 0;
+	    	addition = num1 + num2;
+	    	subtraction = num1 - num2;
+	    	multiplication = num1 * num2;
+	    	int addtionAnswer = 
+	    			Integer.parseInt(addtionEditText.getText().toString());
+	    	int subtractionAnswer = 
+	    			Integer.parseInt(subtractionEditText.getText().toString());
+	    	int multiplicationAnswer = 
+	    			Integer.parseInt(multiplicationEditText.getText().toString());
+	    	if(addition == addtionAnswer) correctAnswers++;
+	    	if(subtraction == subtractionAnswer) correctAnswers++;
+	    	if(multiplication == multiplicationAnswer) correctAnswers++;
+	    	String resultString = 
+	    			"You got " + correctAnswers +  " question(s) correct!";
+	    	resultTextView.setText(resultString);
+	        AssetManager assets = getActivity().getAssets(); 
+	        try {
+	        	InputStream stream = 
+		        		assets.open("star.png");
+	        	Drawable star = Drawable.createFromStream(stream, "star.png");
+	        	if(correctAnswers == 1) oneStarImageView.setImageDrawable(star);
+	        	else if (correctAnswers == 2) { 
+	        		oneStarImageView.setImageDrawable(star);
+	        		twoStarImageView.setImageDrawable(star);
+	        	}
+	        	else if(correctAnswers == 3) {
+	        		oneStarImageView.setImageDrawable(star);
+	        		twoStarImageView.setImageDrawable(star);
+	        		threeStarImageView.setImageDrawable(star);
+	        	}
+	        }
+	        catch (IOException exception) {
+	        	Log.e(TAG, "Error loading " + "m_logo.png");
+	        }
+	        
+	        
 	    	 
 	    }
 	    private int randInt(int min, int max) {

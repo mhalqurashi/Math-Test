@@ -5,7 +5,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="pleaseAnsewrQuestions">Please answer the following questions:</string>
-    <string name="results">You got %1$d question(s) correct!</string>
     <string name="submitAnswers">Submit Answers</string>
     <string name="resetQuestios">Reset Questions</string>
 
